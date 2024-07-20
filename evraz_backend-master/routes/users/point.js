@@ -1,4 +1,4 @@
-const { createUser, changeUserPassword,createUser_2} = require('../../handlers/users/handler');
+const { createUser,createUser_2} = require('../../handlers/users/handler');
 const { ReceivingUsers } = require('../../handlers/users/handler');
 const jwt = require('jsonwebtoken');
 module.exports = function (fastify, opts, next) {

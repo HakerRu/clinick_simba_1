@@ -12,10 +12,12 @@ async function changeUserPassword(object){
     try {
         const old_password = (md5(object['Old_password']));
         const new_password = (md5(object['New_password']));
-        const jwes = decode('userEmail')
+        const Token = object["userToken"]
+        let decodeToken =jwt.decode(Token)
+        let Email =decodeToken['userEmail'][0]
         const checkUser = await client.query(`SELECT * FROM users WHERE "userEmail" = $1 and "userHashPassword" = $2`,
             [
-                jwes['userEmail'][0],
+                Email,
                 old_password
             ]);
         if (checkUser.rows.length>0){
@@ -28,6 +30,7 @@ async function changeUserPassword(object){
 
     }catch (err){
         console.log(err);
+
     }
 
     finally {

@@ -1,19 +1,15 @@
-// asd
-const {  userLogin } = require('../../handlers/userLogin/handler');
-const jwt = require("jsonwebtoken");
-
+const {sellPills} = require('../../handlers/functionForSurgery/handler');
 
 module.exports = function (fastify, opts, next) {
 
     fastify.route({
-        url: '/Login',
+        url:    '/sellPills',
         method: 'POST',
         async handler(request, reply) {
-            const data = await userLogin(request.body);
+            const data = await sellPills(request.body);
             reply.status(data.statusCode)
             reply.send(data)
         },
     });
-
-        next();
-}
+    next();
+};

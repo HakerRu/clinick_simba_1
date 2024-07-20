@@ -82,7 +82,7 @@ async function createUser_2(object){
     try {
 
         const codeVerification = object['userCodeVerification']
-        const codeVer = await client.query(`SELECT * FROM code_verification where "userEmail" = $1`, [object.userEmail])
+        const codeVer = await client.query(`SELECT * FROM code_verifi4cation where "userEmail" = $1`, [object.userEmail])
 
         if(Number(codeVerification) !== Number(codeVer.rows[0]['userCodeVerification'])){
             data.message = 'неправильный код варификации'

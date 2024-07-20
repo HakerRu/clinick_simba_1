@@ -5,7 +5,7 @@ async function userLogin(object){
     const funcName = 'userLogin';
     const client = await pool.connect();
     const data = {
-        message:    'error',    statusCode: 400,
+        message:    'error',    statusCode: 400, refreshToken: 'null', accessToken: 'null'
     };
     try {
 
@@ -22,9 +22,11 @@ async function userLogin(object){
             const payload = {
                 userEmail: [object.userEmail]
         }
-            const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '15m'})
+            const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
             const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '60d'})
             await client.query('UPDATE users SET "userToken" = $1 where "userEmail" = $2', [refreshToken, object.userEmail])
+            data.refreshToken = refreshToken
+            data.accessToken = accessToken
         }
         else {
             data.message = 'неверный пароль или почта'
