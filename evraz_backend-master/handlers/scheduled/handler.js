@@ -36,11 +36,11 @@ async function ADDuser(object){
 
 
 
-        await client.query(`INSERT INTO scheduled ("userId", "servicesId","userEmail","time", "status")
+        await client.query(`INSERT INTO scheduled ("userId", "servicesName","userEmail","time", "status")
                                   VALUES ($1, $2,$3,$4,$5)`,
             [
                 object.userId,
-                    object.servicesId,
+                    object.servicesName,
                 object.userEmail,
                 object.time,
                 fal
