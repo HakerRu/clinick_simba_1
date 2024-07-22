@@ -23,7 +23,7 @@ async function userLogin(object){
                 userEmail: [object.userEmail]
         }
             const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
-            const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '60d'})
+            const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
             await client.query('UPDATE users SET "userToken" = $1 where "userEmail" = $2', [refreshToken, object.userEmail])
             data.refreshToken = refreshToken
             data.accessToken = accessToken

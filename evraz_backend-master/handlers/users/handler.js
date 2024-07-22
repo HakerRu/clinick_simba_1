@@ -93,10 +93,10 @@ async function createUser_2(object){
             await client.query(`DELETE FROM code_verification where "userEmail" = $1`,[object.userEmail])
             console.log('huy')
             const hash_password = (md5(object['userPassword']));
-            console.log(codeVer.rows[0]["userEmail"])
+            const userEmail = codeVer.rows[0]["userEmail"]
 
             const payload = {
-                userEmail: codeVer.rows[0]["userEmail"]
+                userEmail: userEmail
             }
             const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
             const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
@@ -104,11 +104,11 @@ async function createUser_2(object){
             await client.query(`INSERT INTO users ("userEmail", "userHashPassword","userToken")
                                 VALUES ($1, $2, $3)`,
                 [
-                    object.userEmail,
+                    userEmail,
                     hash_password,
                     refreshToken
                 ]);
-            data.userEmail = object.userEmail
+            data.userEmail = userEmail
             data.statusCode = 200
             data.message = 'пользователь был добавлен в бд'
             data.accessToken = accessToken
