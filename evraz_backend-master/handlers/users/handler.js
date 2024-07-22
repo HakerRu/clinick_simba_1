@@ -82,7 +82,7 @@ async function createUser_2(object){
     try {
 
         const codeVerification = object['userCodeVerification']
-        const codeVer = await client.query(`SELECT * FROM code_verifi4cation where "userEmail" = $1`, [object.userEmail])
+        const codeVer = await client.query(`SELECT * FROM code_verification where "userCodeVerification" = $1`, [codeVerification])
 
         if(Number(codeVerification) !== Number(codeVer.rows[0]['userCodeVerification'])){
             data.message = 'неправильный код варификации'
@@ -93,16 +93,16 @@ async function createUser_2(object){
             await client.query(`DELETE FROM code_verification where "userEmail" = $1`,[object.userEmail])
             console.log('huy')
             const hash_password = (md5(object['userPassword']));
-
+            console.log(codeVer.rows[0]["userEmail"])
 
             const payload = {
-                userEmail: [object.userEmail]
+                userEmail: codeVer.rows[0]["userEmail"]
             }
             const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
             const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
             console.log(jwt.decode(accessToken))
             await client.query(`INSERT INTO users ("userEmail", "userHashPassword","userToken")
-                                VALUES ($1, $2)`,
+                                VALUES ($1, $2, $3)`,
                 [
                     object.userEmail,
                     hash_password,
