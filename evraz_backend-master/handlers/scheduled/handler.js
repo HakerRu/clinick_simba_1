@@ -86,11 +86,11 @@ async function PostInfo(object) {
         let Email =decodeToken['userEmail'][0]
         const check = await client.query(`SELECT "time"
                                           FROM scheduled
-                                          where userEmail = $1`, [Email])
+                                          where "userEmail" = $1`, [Email])
         if (check.rows.length === 0) {
             data.message = 'don`t found'
         }
-        const checkStatus =  await  client.query(`SELECT * FROM scheduled where "userEmail = $1"`, [
+        const checkStatus =  await  client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [
             Email
         ])
         let dataScheduled = check.rows[0]['time']
