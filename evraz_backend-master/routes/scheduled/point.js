@@ -1,4 +1,4 @@
-const { ADDuser, PostInfo, messageInfo} = require('../../handlers/scheduled/handler');
+const { ADDuser, PostInfo, messageInfo, postSchedulesInfo} = require('../../handlers/scheduled/handler');
 const jwt = require("jsonwebtoken");
 
 module.exports = function (fastify, opts, next) {
@@ -24,6 +24,15 @@ module.exports = function (fastify, opts, next) {
         method: 'POST',
         async handler(request, reply) {
             const data = await ADDuser(request.body);
+            reply.status(data.statusCode)
+            reply.send(data)
+        },
+    });
+    fastify.route({
+        url:    '/postSchedulesInfo',
+        method: 'POST',
+        async handler(request, reply) {
+            const data = await postSchedulesInfo(request.body);
             reply.status(data.statusCode)
             reply.send(data)
         },
