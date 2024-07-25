@@ -110,7 +110,7 @@ async function PostInfo(object) {
         data.dateWait = mass
         data.statusCode = 200
         data.message = check.rows + now
-        data.statusInfo = checkStatus[0]['status']
+        data.statusInfo = checkStatus.rows[0]['status']
     } catch (err) {
         console.log(err.message, err.stack);
 
@@ -220,7 +220,7 @@ async function messageInfo(object) {
         payload = {
             userEmail: refresh
         }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
         data.newAccessToken = accessToken
         data.newRefreshToken = refreshToken
@@ -337,6 +337,63 @@ async function ConfirmationFalse(object) {
     }
 
 
+
+    finally
+    {
+        client.release();
+        console.log(`${funcName}: client release()`);
+    }
+    return data;}
+
+
+
+
+
+
+async function postSchedulesInfo(object) {
+    const funcName = 'postSchedulesInfo';
+    const client = await pool.connect();
+    const data = {
+        message: 'error', statusCode: 400, scheduledPeople: [], count: 0
+    };
+    try {
+        const Token = object["userToken"]
+        let decodeToken =jwt.decode(Token)
+        let Email =decodeToken['userEmail'][0]
+        const PeopleCountScheduled = await client.query(`SELECT * FROM scheduled WHERE "userEmail" = $1`, [Email])
+        data.count  = PeopleCountScheduled.rows.length
+        data.scheduledPeople = PeopleCountScheduled.rows
+        data.statusCode = 200
+        data.message = 'all good'
+
+
+    } catch (err) {
+        console.log(err.message, err.stack);
+
+        const token = ['refreshToken']
+        let refresh = jwt.decode(token)
+        refresh = refresh['userEmail'][0]
+
+        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
+        if (Number(refresh.rows.length) == 0) {
+            data.statusCode = 403
+            data.message = 'tokenDEAD'
+        }
+        payload = {
+            userEmail: refresh
+        }
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
+        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
+        data.newAccessToken = accessToken
+        data.newRefreshToken = refreshToken
+        data.message = 'tokenWasRefresh'
+        data.statusCode = 201
+
+
+    }
+
+
+
     finally
     {
         client.release();
@@ -346,6 +403,7 @@ async function ConfirmationFalse(object) {
 module.exports = {
     ADDuser: ADDuser,
     PostInfo: PostInfo,
+    postSchedulesInfo:postSchedulesInfo,
     messageInfo: messageInfo,
     ConfirmationTrue:ConfirmationTrue,
     ConfirmationFalse:ConfirmationFalse
