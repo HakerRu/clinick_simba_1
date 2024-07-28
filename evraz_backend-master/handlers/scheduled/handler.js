@@ -74,170 +74,7 @@ async function ADDuser(object){
     return data;
 }
 
-async function PostInfo(object) {
-    const funcName = 'PostInfo';
-    const client = await pool.connect();
-    const data = {
-        message: 'error', statusCode: 400, dateWait: [], statusInfo: false, newAccessToken: 'none', newRefreshToken: 'none'
-    };
-    try {
-        const Token = object["userToken"]
-        let decodeToken =jwt.decode(Token)
-        let Email =decodeToken['userEmail'][0]
-        const check = await client.query(`SELECT "time"
-                                          FROM scheduled
-                                          where "userEmail" = $1`, [Email])
-        if (check.rows.length === 0) {
-            data.message = 'don`t found'
-        }
-        const checkStatus =  await  client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [
-            Email
-        ])
-        let dataScheduled = check.rows[0]['time']
-        let now = new Date()
-        let mass = [{
-            year: "",
-            month: "",
-            date: "",
-            hour: "",
-            minutes: ""
-        }]
-        mass[0]['year'] = dataScheduled.getFullYear() - now.getFullYear()
-        mass[0]['month'] = dataScheduled.getMonth() - now.getMonth()
-        mass[0]['date'] = dataScheduled.getDate() - now.getDate()
-        mass[0]['hour'] = dataScheduled.getHours() - now.getHours()
-        mass[0]['minutes'] = dataScheduled.getMinutes() - now.getMinutes()
-        data.dateWait = mass
-        data.statusCode = 200
-        data.message = check.rows + now
-        data.statusInfo = checkStatus.rows[0]['status']
-    } catch (err) {
-        console.log(err.message, err.stack);
 
-        const token = ['refreshToken']
-        let refresh = jwt.decode(token)
-        refresh = refresh['userEmail'][0]
-
-        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (Number(refresh.rows.length) == 0) {
-            data.statusCode = 403
-            data.message = 'tokenDEAD'
-        }
-        payload = {
-            userEmail: refresh
-        }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
-        data.newAccessToken = accessToken
-        data.newRefreshToken = refreshToken
-        data.message = 'tokenWasRefresh'
-        data.statusCode = 201
-
-    }
-finally
-{
-    client.release();
-    console.log(`${funcName}: client release()`);
-}
-return data;}
-
-
-async function messageInfo(object) {
-    const funcName = 'PostInfo';
-    const client = await pool.connect();
-    let mass = [{
-        year: "",
-        month: "",
-        date: "",
-        hour: "",
-        minutes: ""
-    }]
-    const data = {
-        message: 'error', statusCode: 400, dateWait: [], newAccessToken: 'none', newRefreshToken:  'none'
-    };
-    try {
-
-        const Token = object["userToken"]
-        let decodeToken =jwt.decode(Token)
-        let Email =decodeToken['userEmail'][0]
-
-        const check = await client.query(`SELECT "time"
-                                          FROM scheduled
-                                          where userEmail = $1`, [Email])
-        let dataScheduled = check.rows[0]['time']
-        let now = new Date()
-        if (check.rows.length === 0) {
-            data.message = 'don`t found'
-        }
-
-        if (dataScheduled.getDate() - now.getDate() <= 1 &&
-            dataScheduled.getMonth() - now.getMonth() === 0 &&
-            dataScheduled.getFullYear() - now.getFullYear() === 0 &&
-            dataScheduled.getHours() - now.getHours() <=24){
-
-
-            //
-            // dataScheduled.getFullYear() - now.getFullYear() === 0 &&
-            // dataScheduled.getMonth() - now.getMonth() === 0 &&
-            // dataScheduled.getDate() - now.getDate() === 1 &&
-            // dataScheduled.getHours() - now.getHours() === 0 &&
-            // dataScheduled.getMinutes() - now.getMinutes() === 0
-
-            const mailOptions = {
-                from: 'kostaykazunin@gmail.com',
-                to: object.userEmail,
-                subject: 'Clinic_simba',
-                text: 'вам необходимо подтвердить ваш визит к нам в личном кабинете за 48 часов до начала приёма',
-            }
-            await transporter.sendMail(mailOptions,  async err => {
-                console.log(err)})
-
-
-            data.message = 200
-
-            mass[0]['date'] = dataScheduled.getDate() - now.getDate()
-            mass[0]['hour'] = dataScheduled.getHours() - now.getHours()
-            data.dateWait = mass
-
-        }
-
-        data.statusCode = 400
-        data.message = check.rows  +   '            '   + now
-    } catch (err) {
-        console.log(err.message, err.stack);
-
-
-
-        const token = ['refreshToken']
-        let refresh = jwt.decode(token)
-        refresh = refresh['userEmail'][0]
-
-        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (refresh.rows.length == 0) {
-            data.statusCode = 403
-            data.message = 'tokenDEAD'
-        }
-        payload = {
-            userEmail: refresh
-        }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
-        data.newAccessToken = accessToken
-        data.newRefreshToken = refreshToken
-        data.message = 'tokenWasRefresh'
-        data.statusCode = 201
-
-    }
-
-
-finally
-    {
-        client.release();
-        console.log(`${funcName}: client release()`);
-    }
-    return data;
-
-}
 //подтверждние записи
 async function ConfirmationTrue(object) {
     const funcName = 'ConfirmationTrue';
@@ -347,35 +184,162 @@ async function ConfirmationFalse(object) {
 
 
 
+// async function PostInfo(object) {
+//     const funcName = 'PostInfo';
+//     const client = await pool.connect();
+//     const data = {
+//         message: 'error', statusCode: 400, dateWait: [], statusInfo: false, newAccessToken: 'none', newRefreshToken: 'none'
+//     };
+//     try {
+//         const Token = object["userToken"]
+//         let decodeToken =jwt.decode(Token)
+//         let Email =decodeToken['userEmail'][0]
+//         const check = await client.query(`SELECT "time"
+//                                           FROM scheduled
+//                                           where "userEmail" = $1`, [Email])
+//         if (check.rows.length === 0) {
+//             data.message = 'don`t found'
+//         }
+//         const checkStatus =  await  client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [
+//             Email
+//         ])
+//         let dataScheduled = check.rows[0]['time']
+//         let now = new Date()
+//         let mass = [{
+//             year: "",
+//             month: "",
+//             date: "",
+//             hour: "",
+//             minutes: ""
+//         }]
+//         mass[0]['year'] = dataScheduled.getFullYear() - now.getFullYear()
+//         mass[0]['month'] = dataScheduled.getMonth() - now.getMonth()
+//         mass[0]['date'] = dataScheduled.getDate() - now.getDate()
+//         mass[0]['hour'] = dataScheduled.getHours() - now.getHours()
+//         mass[0]['minutes'] = dataScheduled.getMinutes() - now.getMinutes()
+//         data.dateWait = mass
+//         data.statusCode = 200
+//         data.message = check.rows + now
+//         data.statusInfo = checkStatus.rows[0]['status']
+//     } catch (err) {
+//         console.log(err.message, err.stack);
+//
+//         const token = ['refreshToken']
+//         let refresh = jwt.decode(token)
+//         refresh = refresh['userEmail'][0]
+//
+//         await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
+//         if (Number(refresh.rows.length) == 0) {
+//             data.statusCode = 403
+//             data.message = 'tokenDEAD'
+//         }
+//         payload = {
+//             userEmail: refresh
+//         }
+//         const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
+//         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
+//         data.newAccessToken = accessToken
+//         data.newRefreshToken = refreshToken
+//         data.message = 'tokenWasRefresh'
+//         data.statusCode = 201
+//
+//     }
+//     finally
+//     {
+//         client.release();
+//         console.log(`${funcName}: client release()`);
+//     }
+//     return data;}
 
 
-
-async function postSchedulesInfo(object) {
-    const funcName = 'postSchedulesInfo';
+async function messageInfo(object) {
+    const funcName = 'PostInfo';
     const client = await pool.connect();
+    let mass = [{
+        year: "",
+        month: "",
+        date: "",
+        hour: "",
+        minutes: ""
+    }]
     const data = {
-        message: 'error', statusCode: 400, scheduledPeople: [], count: 0
+        message: 'error', statusCode: 400, dateWait: [], newAccessToken: 'none', newRefreshToken:  'none',countEmail: 0
     };
     try {
+
         const Token = object["userToken"]
         let decodeToken =jwt.decode(Token)
         let Email =decodeToken['userEmail'][0]
-        const PeopleCountScheduled = await client.query(`SELECT * FROM scheduled WHERE "userEmail" = $1`, [Email])
-        data.count  = PeopleCountScheduled.rows.length
-        data.scheduledPeople = PeopleCountScheduled.rows
-        data.statusCode = 200
-        data.message = 'all good'
+        const checkCountUsersEmail = await client.query(`SELECT * FROM scheduled where "userEmail" = $1'`, [Email])
+        if (checkCountUsersEmail.rows.length >= 1){
+            let massivInfo = []
 
 
+            const check = await client.query(`SELECT *
+                                          FROM scheduled
+                                          where userEmail = $1`, [Email])
+            let dataScheduled = check.rows[0]['time']
+            let now = new Date()
+            if (check.rows.length === 0) {
+                data.message = 'don`t found'
+            }
+
+            for (let i = 0; i < checkCountUsersEmail.rows.length; i++) {
+                const mass = [{
+                        userEmail:"",
+                        date: "",
+                        hour: "",
+                        servicesName: ""
+                    }]
+
+
+
+
+                //отправка на почту
+
+                if (dataScheduled.getDate() - now.getDate() <= 1 &&
+                    dataScheduled.getMonth() - now.getMonth() === 0 &&
+                    dataScheduled.getFullYear() - now.getFullYear() === 0 &&
+                    dataScheduled.getHours() - now.getHours() <=24){
+                    const mailOptions = {
+                        from: 'kostaykazunin@gmail.com',
+                        to: object.userEmail,
+                        subject: 'Clinic_simba',
+                        text: 'вам необходимо подтвердить ваш визит к нам в личном кабинете за 48 часов до начала приёма',
+                    }
+                    await transporter.sendMail(mailOptions,  async err => {
+                        console.log(err)})
+
+
+
+
+
+                    mass[0]["userEmail"] = check.rows[i]["userEmail"]
+                    mass[0]['date'] = dataScheduled.getDate() - now.getDate()
+                    mass[0]['hour'] = dataScheduled.getHours() - now.getHours()
+                    mass[0]["servicesName"] = check.rows[i]["servicesName"]
+
+                    massivInfo.push(mass)
+            }
+        }
+
+            data.dateWait = massivInfo
+
+        }
+
+        data.statusCode = 400
+        data.message = 'all bad'
     } catch (err) {
         console.log(err.message, err.stack);
+
+
 
         const token = ['refreshToken']
         let refresh = jwt.decode(token)
         refresh = refresh['userEmail'][0]
 
         await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (Number(refresh.rows.length) == 0) {
+        if (refresh.rows.length == 0) {
             data.statusCode = 403
             data.message = 'tokenDEAD'
         }
@@ -389,9 +353,7 @@ async function postSchedulesInfo(object) {
         data.message = 'tokenWasRefresh'
         data.statusCode = 201
 
-
     }
-
 
 
     finally
@@ -399,11 +361,13 @@ async function postSchedulesInfo(object) {
         client.release();
         console.log(`${funcName}: client release()`);
     }
-    return data;}
+    return data;
+
+}
+
 module.exports = {
     ADDuser: ADDuser,
-    PostInfo: PostInfo,
-    postSchedulesInfo:postSchedulesInfo,
+    // PostInfo: PostInfo,
     messageInfo: messageInfo,
     ConfirmationTrue:ConfirmationTrue,
     ConfirmationFalse:ConfirmationFalse
