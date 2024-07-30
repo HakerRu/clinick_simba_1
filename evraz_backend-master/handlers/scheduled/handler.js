@@ -88,9 +88,10 @@ async function ConfirmationTrue(object) {
         let Email =decodeToken['userEmail'][0]
         const checkConfirmation = object['Confirmation']
         if (checkConfirmation === 'True'){
-            await client.query('UPDATE scheduled SET "status" = $1 where "userEmail" = $2', ['True',
+            await client.query('UPDATE scheduled SET "status" = $1 where "userEmail" = $2 and "servicesName" = $3', ['True',
 
-                Email
+                Email,
+                object.servicesName
 
             ])
         }
@@ -143,18 +144,17 @@ async function ConfirmationFalse(object) {
         const checkConfirmation = object['Confirmation']
 
         if (checkConfirmation === 'False'){
-            await client.query(`DELETE * FROM scheduled where "userEmail" = $1`, [
-                Email
+            await client.query(`DELETE * FROM scheduled where "userEmail" = $1 and "servicesName" = $2`, [
+                Email,
+                object.servicesName
             ])
         }
 
     } catch (err) {
         console.log(err.message, err.stack);
-
         const token = ['refreshToken']
         let refresh = jwt.decode(token)
         refresh = refresh['userEmail'][0]
-
         await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
         if (Number(refresh.rows.length) == 0) {
             data.statusCode = 403
