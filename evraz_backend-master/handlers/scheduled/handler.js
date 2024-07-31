@@ -27,7 +27,6 @@ const transporter =  nodemailer.createTransport({
 async function ADDuser(object){
     const funcName = 'ADDuser';
     let fal = 'false'
-
     const client = await pool.connect();
     const data = {
         message:    'error',    statusCode: 400,
@@ -365,9 +364,57 @@ async function messageInfo(object) {
 
 }
 
+
+
+
+async function postScheduledInfo(object){
+    const funcName = 'postScheduledInfo';
+    const client = await pool.connect();
+    const data = {
+        message:    'error',    statusCode: 400, count: 0, allInfo: []
+    };
+    try {
+        const Token = object["userToken"]
+        let decodeToken =jwt.decode(Token)
+        let Email =decodeToken['userEmail'][0]
+        const check = await client.query(`SELECT * FROM scheduled where "userEmail" = $1` [Email])
+        let mainMass = []
+        for (let i = 0; i < check.rows.length; i++) {
+            const mass= [
+                {
+                    userEmail: "",
+                    servicesName: "",
+                    time: ""
+                }
+            ]
+            mass["userEmail"] = check.rows[i]["userEmail"]
+            mass["servicesName"] = check.rows[i]["servicesName"]
+            mass["time"] = check.rows[i]["time"]
+            mainMass.push(mass)
+
+
+        }
+    data.count = check.rows.length
+        data.allInfo = mainMass
+        data.statusCode = 200
+        data.message = 'allGood'
+
+
+    }catch (err){
+        console.log(err.message, err.stack);
+
+
+
+    }
+    finally {
+        client.release();
+        console.log(`${ funcName }: client release()`);
+    }
+    return data;
+}
 module.exports = {
     ADDuser: ADDuser,
-    // PostInfo: PostInfo,
+    postScheduledInfo:postScheduledInfo,
     messageInfo: messageInfo,
     ConfirmationTrue:ConfirmationTrue,
     ConfirmationFalse:ConfirmationFalse
