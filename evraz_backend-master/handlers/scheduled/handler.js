@@ -334,7 +334,7 @@ async function messageInfo(object) {
 
 
 
-        const token = ['refreshToken']
+        const token = ['refreshT`oken']
         let refresh = jwt.decode(token)
         refresh = refresh['userEmail'][0]
 
@@ -405,12 +405,12 @@ async function postScheduledInfo(object){
 
     }catch (err){
         console.log(err.message, err.stack);
-        const token = ['refreshToken']
+        const token = object['refreshToken']
         let refresh = jwt.decode(token)
         refresh = refresh['userEmail'][0]
 
-        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (refresh.rows.length == 0) {
+        const checkAll= await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
+        if (checkAll.rows.length == 0) {
             data.statusCode = 403
             data.message = 'tokenDEAD'
         }
@@ -423,6 +423,7 @@ async function postScheduledInfo(object){
         data.newRefreshToken = refreshToken
         data.message = 'tokenWasRefresh'
         data.statusCode = 201
+
 
 
 
