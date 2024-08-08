@@ -385,12 +385,14 @@ async function postScheduledInfo(object){
                 {
                     userEmail: "",
                     servicesName: "",
-                    time: ""
+                    time: "",
+                    status: ""
                 }
             ]
             mass["userEmail"] = check.rows[i]["userEmail"]
             mass["servicesName"] = check.rows[i]["servicesName"]
             mass["time"] = check.rows[i]["time"]
+            mass["status"] = check.rows[i]["status"]
             mainMass.push(mass)
 
 
