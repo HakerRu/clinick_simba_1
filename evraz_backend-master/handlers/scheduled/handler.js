@@ -355,7 +355,16 @@ async function postScheduledInfo(object){
 
     }catch (err){
         console.log(err.message, err.stack);
-        data.statusCode = 203
+        const Token = object["userToken"]
+        let decodeToken =jwt.decode(Token)
+        let Email =decodeToken['userEmail'][0]
+        const RToken = object["refreshTokenToken"]
+        let RdecodeToken =jwt.decode(RToken)
+        let REmail =RdecodeToken['userEmail'][0]
+        if (REmail !==  Email){
+            data.statusCode = 203
+            data.message = 'tokenProblem'
+        }
 
 
 
