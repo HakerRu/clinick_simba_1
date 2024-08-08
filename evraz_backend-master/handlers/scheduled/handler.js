@@ -94,7 +94,8 @@ async function ConfirmationTrue(object) {
 
             ])
         }
-
+        data.statusCode = 200
+        data.message = "allgood"
 
 
     } catch (err) {
