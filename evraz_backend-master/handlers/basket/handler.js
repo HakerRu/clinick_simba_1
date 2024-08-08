@@ -45,24 +45,8 @@ async function addInBasket(object){
     }catch (err){
         console.log(err.message, err.stack);
 
+        data.statusCode = 203
 
-        let refresh = jwt.decode(token)
-        refresh = refresh['userEmail'][0]
-
-        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (Number(refresh.rows.length) == 0) {
-            data.statusCode = 403
-            data.message = 'tokenDEAD'
-        }
-        payload = {
-            userEmail: refresh
-        }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
-        data.newAccessToken = accessToken
-        data.newRefreshToken = refreshToken
-        data.message = 'tokenWasRefresh'
-        data.statusCode = 201
     }
 
     finally {
@@ -121,23 +105,8 @@ async function deleteTable(object){
         data.message = 'всё отлично'
     }catch (err){
         console.log(err.message, err.stack);
-        let refresh = jwt.decode(token)
-        refresh = refresh['userEmail'][0]
+        data.statusCode = 203
 
-        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (Number(refresh.rows.length) == 0) {
-            data.statusCode = 403
-            data.message = 'tokenDEAD'
-        }
-        payload = {
-            userEmail: refresh
-        }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
-        data.newAccessToken = accessToken
-        data.newRefreshToken = refreshToken
-        data.message = 'tokenWasRefresh'
-        data.statusCode = 201
     }
 
     finally {
@@ -169,25 +138,8 @@ async function deleteObjectIntTable(object){
         data.message = 'всё отлично'
     }catch (err){
         console.log(err.message, err.stack);
+        data.statusCode = 203
 
-
-        let refresh = jwt.decode(token)
-        refresh = refresh['userEmail'][0]
-
-        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
-        if (Number(refresh.rows.length) == 0) {
-            data.statusCode = 403
-            data.message = 'tokenDEAD'
-        }
-        payload = {
-            userEmail: refresh
-        }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
-        data.newAccessToken = accessToken
-        data.newRefreshToken = refreshToken
-        data.message = 'tokenWasRefresh'
-        data.statusCode = 201
     }
 
     finally {

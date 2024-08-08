@@ -30,6 +30,8 @@ async function changeUserPassword(object){
 
     }catch (err){
         console.log(err);
+        data.statusCode = 203
+
 
     }
 
