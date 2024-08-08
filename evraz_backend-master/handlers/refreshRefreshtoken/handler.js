@@ -4,7 +4,7 @@ async function refreshRefresh(object){
     const funcName = 'refreshRefresh';
     const client = await pool.connect();
     const data = {
-        message:    'error',    statusCode: 400,
+        message:    'error',    statusCode: 400, newAccessToken: '', newRefreshToken: ''
     };
     try {
         const token = object['refreshToken']
