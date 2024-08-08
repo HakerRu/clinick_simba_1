@@ -405,6 +405,24 @@ async function postScheduledInfo(object){
 
     }catch (err){
         console.log(err.message, err.stack);
+        const token = ['refreshToken']
+        let refresh = jwt.decode(token)
+        refresh = refresh['userEmail'][0]
+
+        await client.query(`SELECT * FROM scheduled where "userEmail" = $1`, [refresh])
+        if (refresh.rows.length == 0) {
+            data.statusCode = 403
+            data.message = 'tokenDEAD'
+        }
+        payload = {
+            userEmail: refresh
+        }
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'})
+        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'})
+        data.newAccessToken = accessToken
+        data.newRefreshToken = refreshToken
+        data.message = 'tokenWasRefresh'
+        data.statusCode = 201
 
 
 
