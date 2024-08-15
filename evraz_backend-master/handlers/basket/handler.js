@@ -27,10 +27,10 @@ async function addInBasket(object){
             data.message = 'не нашёл пользователя с таким токеном'
         }
 
-        await client.query(`INSERT INTO basket_for_users ("userId","userEmail", "quantity","idItems" ,"place", "userToken")
-                                  VALUES ($1, $2, $3, $4, $5)`,
+        await client.query(`INSERT INTO basket_for_users ("userEmail", "quantity","idItems" ,"place")
+                                  VALUES ($1, $2, $3, $4,)`,
             [
-                getUser.rows[0]['userId'],
+
                 getUser.rows[0]['userEmail'],
                 object.quantity,
                 object.idItems,

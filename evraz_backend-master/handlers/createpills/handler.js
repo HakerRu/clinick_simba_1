@@ -18,6 +18,7 @@ async function addInDB(object){
                 object.quantity,
                 object.category
             ]);
+
         data.statusCode =200
     }catch (err){
         console.log(err.message, err.stack);
@@ -36,7 +37,7 @@ async function deletpills(object){
         message:    'error',    statusCode: 400,
     };
     try {
-        await client.query(`DELETE FROM item_pills_bd where "name" = $1`,[object.name])
+        await client.query(`DELETE FROM item_pills_bd where "name" = $1 and "category" = $2`,[object.name, object.category])
     }catch (err){
         console.log(err.message, err.stack);
     }
@@ -46,6 +47,60 @@ async function deletpills(object){
     }
     return data;
 }
+
+
+async function updatePills(object){
+    const funcName = 'updatePills';
+    const client = await pool.connect();
+    const data = {
+        message:    'error',    statusCode: 400,
+    };
+    try {
+
+        if (object["Change_description"] !== "null"){
+
+            await client.query('UPDATE item_pills_bd SET "description" = $1 where "codeId" = $2', [object.description ,object.codeId  ])
+
+        }
+
+        if (object["Change_img"] !== "null"){
+
+            await client.query('UPDATE item_pills_bd SET "img" = $1 where "codeId" = $2', [object.img ,object.codeId  ])
+
+        }
+
+        if (object["Change_name"] !== "null"){
+
+            await client.query('UPDATE item_pills_bd SET "name" = $1 where "codeId" = $2', [object.name ,object.codeId  ])
+
+        }
+
+        if (object["Change_quantity"] !== "null"){
+
+            await client.query('UPDATE item_pills_bd SET "quantity" = $1 where "codeId" = $2', [object.quantity ,object.codeId  ])
+
+        }
+
+        if (object["Change_category"] !== "null"){
+
+            await client.query('UPDATE item_pills_bd SET "category" = $1 where "codeId" = $2', [object.category ,object.codeId  ])
+
+        }
+
+
+
+
+
+    }catch (err){
+        console.log(err.message, err.stack);
+    }
+    finally {
+        client.release();
+        console.log(`${ funcName }: client release()`);
+    }
+    return data;
+}
+
 
 
 
@@ -107,17 +162,18 @@ async function backInfoAway(object){
     const funcName = 'backInfoAway';
     const client = await pool.connect();
     const data = {
-        message:    'error',    statusCode: 400,
+        message:    'error',    statusCode: 400, items_category: []
     };
     try {
-        const allInfo = await client.query(`SELECT * FROM item_pills_bd where "categories_id" = $1`, [object.categories_id])
+        const allInfo = await client.query(`SELECT * FROM item_pills_bd where "category" = $1`, [object.category])
 
         if (allInfo.rows.length == 0){
-            data.message = 'our rows = 0'
+            data.message = "нет объектов в этой категории"
         }
-        data.message = allInfo.rows
-        data.statusCode = 200`
-    }catch (err){`
+        data.items_category = allInfo.rows
+        data.statusCode = 200
+        data.message = 'all good'
+    }catch (err){
         console.log(err.message, err.stack);
     }
     finally {
@@ -132,6 +188,7 @@ async function backInfoAway(object){
 
 module.exports = {
     addInDB: addInDB,
+    updatePills:updatePills,
     deletpills: deletpills,
     changeCount: changeCount,
     backInfoAway: backInfoAway,

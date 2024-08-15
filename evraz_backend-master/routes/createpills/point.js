@@ -1,8 +1,19 @@
-const { addInDB, changeCount, backCount, backInfoAway, deletpills } = require('../../handlers/createpills/handler');
+const { addInDB, changeCount, backCount, backInfoAway, deletpills, updatePills } = require('../../handlers/createpills/handler');
 const jwt = require("jsonwebtoken");
 
 module.exports = function (fastify, opts, next) {
 
+
+
+    fastify.route({
+        url:    '/updatePills',
+        method: 'POST',
+        async handler(request, reply) {
+            const data = await updatePills(request.body);
+            reply.status(data.statusCode)
+            reply.send(data)
+        },
+    });
 
 
 
