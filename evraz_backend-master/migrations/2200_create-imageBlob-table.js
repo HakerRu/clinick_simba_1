@@ -1,4 +1,4 @@
-ports.shorthands = undefined;
+exports.shorthands = undefined;
 
 exports.up = pgm => {
     pgm.createTable('imageBlob', {
@@ -7,7 +7,7 @@ exports.up = pgm => {
             primaryKey: true,
         },
         img:            {
-            type: "BLOB",
+            type: 'BYTEA',
             comment: 'картинка'
         },
 

@@ -14,6 +14,14 @@ async function addInfo(object){
                 object.information,
                 object.img
             ]);
+        await client.query(`INSERT INTO "imageBlob"  ("img")
+                                VALUES ($1)`,
+            [
+
+                object.img
+            ]);
+        const  huy =  await client.query(`SELECT * FROM "imageBlob"`)
+        data.message = huy.rows
         data.statusCode =200
         data.message = 'all good'
 
