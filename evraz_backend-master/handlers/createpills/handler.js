@@ -57,35 +57,12 @@ async function updatePills(object){
     };
     try {
 
-        if (object["Change_description"] !== "null"){
-
             await client.query('UPDATE item_pills_bd SET "description" = $1 where "codeId" = $2', [object.description ,object.codeId  ])
-
-        }
-
-        if (object["Change_img"] !== "null"){
-
             await client.query('UPDATE item_pills_bd SET "img" = $1 where "codeId" = $2', [object.img ,object.codeId  ])
-
-        }
-
-        if (object["Change_name"] !== "null"){
-
             await client.query('UPDATE item_pills_bd SET "name" = $1 where "codeId" = $2', [object.name ,object.codeId  ])
-
-        }
-
-        if (object["Change_quantity"] !== "null"){
-
             await client.query('UPDATE item_pills_bd SET "quantity" = $1 where "codeId" = $2', [object.quantity ,object.codeId  ])
-
-        }
-
-        if (object["Change_category"] !== "null"){
-
             await client.query('UPDATE item_pills_bd SET "category" = $1 where "codeId" = $2', [object.category ,object.codeId  ])
 
-        }
 
 
 

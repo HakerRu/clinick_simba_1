@@ -84,23 +84,12 @@ async function updateInfo(object){
         const countChanger = object["countChanger"]
         const changeName = object["changeName"]
         //изменение загаловка
-        if (countChanger === 1){
-        await client.query('UPDATE info_board SET "firstName" = $1 where "firstName" = $2', [object.firstName, changeName ])
-            data.statusCode =200
-            data.message = 'all good'
-        }
-        //изменение текста
-        if (countChanger === 2){
+            await client.query('UPDATE info_board SET "firstName" = $1 where "firstName" = $2', [object.firstName, changeName ])
             await client.query('UPDATE info_board SET "information" = $1 where "firstName" = $2', [object.information, changeName])
-            data.statusCode =200
-            data.message = 'all good'
-        }
-        //изменение картинки
-        if (countChanger === 3){
             await client.query('UPDATE info_board SET "img" = $1 where "firstName" = $2', [object.img, changeName])
             data.statusCode =200
             data.message = 'all good'
-        }
+
 
 
     }catch (err){
