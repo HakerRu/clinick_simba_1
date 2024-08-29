@@ -20,8 +20,8 @@ async function addInfo(object){
 
                 object.img
             ]);
-        const  huy =  await client.query(`SELECT * FROM "imageBlob"`)
-        data.message = huy.rows
+        const  blob =  await client.query(`SELECT * FROM "imageBlob"`)
+        data.message = blob.rows
         data.statusCode =200
         data.message = 'all good'
 
