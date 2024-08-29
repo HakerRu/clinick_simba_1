@@ -9,14 +9,15 @@ async function addInDB(object){
         message:    'error',    statusCode: 400,
     };
     try {
-        await client.query(`INSERT INTO item_pills_bd ("description", "img", "name", "quantity", "category")
-                                  VALUES ($1, $2,$3,$4,$5)`,
+        await client.query(`INSERT INTO item_pills_bd ("description", "img", "name", "quantity", "category","price")
+                                  VALUES ($1, $2,$3,$4,$5,$6)`,
             [
                 object.description,
                 object.img,
                 object.name,
                 object.quantity,
-                object.category
+                object.category,
+                object.price
             ]);
 
         data.statusCode =200
@@ -62,6 +63,7 @@ async function updatePills(object){
             await client.query('UPDATE item_pills_bd SET "name" = $1 where "codeId" = $2', [object.name ,object.codeId  ])
             await client.query('UPDATE item_pills_bd SET "quantity" = $1 where "codeId" = $2', [object.quantity ,object.codeId  ])
             await client.query('UPDATE item_pills_bd SET "category" = $1 where "codeId" = $2', [object.category ,object.codeId  ])
+            await client.query('UPDATE item_pills_bd SET "price" = $1 where "codeId" = $2', [object.price ,object.codeId  ])
 
 
 
