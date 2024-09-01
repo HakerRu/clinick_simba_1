@@ -103,9 +103,97 @@ async function sellPills(object){
 }
 
 
+
+async function DeleteSendUsers(object){
+    const funcName = 'DeleteSendUsers';
+    const client = await pool.connect();
+    const now = new Date()
+    const data = {
+        message:    'error',    statusCode: 400,
+    };
+    //delete
+    try {
+        const users = await client.query(`SELECT * FROM sell_pills`)
+
+        for (let i = 0; i < users.rows.length; i++) {
+        let Time = users.rows[i]['createDate']
+
+        if (
+            now.getDate() - Time.getDate()  >= 3
+
+
+        ){
+            await client.query(`DELETE * FROM sell_pills where "userEmail" = $1 and "pillsName" = $2`,[
+                users[i]['userEmail'],
+                users[i]['servicesName']
+            ])
+
+
+
+
+            const mailOptions = {
+                from: 'kostaykazunin@gmail.com',
+                to: users[i]['userEmail'],
+                subject: 'Clinic_simba',
+                text: 'Время ожидания товара истекло. Вы можете заказать повторно',
+            }
+            await transporter.sendMail(mailOptions,  async err => {
+                console.log(err)})
+
+
+
+
+
+
+        }
+
+        //send time if needn`t delete
+        if (
+            now.getDate() - Time.getDate()  <= 2
+
+        ){
+
+
+
+            const mailOptions = {
+                from: 'kostaykazunin@gmail.com',
+                to: takeUsers[i]['status'],
+                subject: 'Clinic_simba',
+                text: 'Заберите товар. Прошло '+now.getDate() - Time.getDate() +' дня с момента бронирования. В случае истечения времени с вашего заказа будет снята бронь. Всего доброго ',
+            }
+            await transporter.sendMail(mailOptions,  async err => {
+                console.log(err)})
+
+
+
+
+
+
+        }}
+
+
+
+
+
+
+    }catch (err){
+        console.log(err.message, err.stack);
+    }
+
+    finally {
+        client.release();
+        console.log(`${ funcName }: client release()`);
+    }
+    return data;
+
+
+}
+
+
 module.exports = {
 
     buyPills: buyPills,
     sellPills: sellPills,
+    DeleteSendUsers:DeleteSendUsers
 
 };

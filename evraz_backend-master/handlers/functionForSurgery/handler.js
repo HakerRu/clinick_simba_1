@@ -31,6 +31,35 @@ async function sellPills(object){
 
 
 }
+
+
+async function AddUserInPills(object){
+    const funcName = 'AddUserInPills';
+    const client = await pool.connect();
+    const data = {
+        message:    'error',    statusCode: 400,
+    };
+    try {
+
+
+    }catch (err){
+        console.log(err.message, err.stack);
+    }
+
+    finally {
+        client.release();
+        console.log(`${ funcName }: client release()`);
+    }
+    return data;
+
+
+}
+
+
+
+
+
 module.exports = {
-    sellPills:sellPills
+    sellPills:sellPills,
+    AddUserInPills:AddUserInPills
 }
