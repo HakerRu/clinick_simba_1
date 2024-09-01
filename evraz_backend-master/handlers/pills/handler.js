@@ -43,13 +43,14 @@ async function buyPills(object){
         //         object.pillsName,
         //         object.pillsCategory
         //     ]);
-        await client.query(`INSERT INTO sell_pills ("userEmail", "randomNumber", "pillsName", "pillsCategory")
-                                                  VALUES ($1, $2, $3, $4)`,
+        await client.query(`INSERT INTO sell_pills ("userEmail", "randomNumber", "pillsName", "pillsCategory", "price")
+                                                  VALUES ($1, $2, $3, $4,$5)`,
             [
                 object.userEmail,
                 random_code,
                 object.pillsName,
-                object.pillsCategory
+                object.pillsCategory,
+                object.price
 
             ]);
         data.message = random_code
