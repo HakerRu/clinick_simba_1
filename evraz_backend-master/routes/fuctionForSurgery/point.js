@@ -1,4 +1,4 @@
-const {sellPills} = require('../../handlers/functionForSurgery/handler');
+const {sellPills,giveBackInfoAboutOrder} = require('../../handlers/functionForSurgery/handler');
 
 module.exports = function (fastify, opts, next) {
 
@@ -7,6 +7,17 @@ module.exports = function (fastify, opts, next) {
         method: 'POST',
         async handler(request, reply) {
             const data = await sellPills(request.body);
+            reply.status(data.statusCode)
+            reply.send(data)
+        },
+    });
+
+
+    fastify.route({
+        url:    '/giveBackInfoAboutOrder',
+        method: 'POST',
+        async handler(request, reply) {
+            const data = await giveBackInfoAboutOrder(request.body);
             reply.status(data.statusCode)
             reply.send(data)
         },

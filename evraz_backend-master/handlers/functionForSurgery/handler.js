@@ -33,14 +33,17 @@ async function sellPills(object){
 }
 
 
-async function AddUserInPills(object){
-    const funcName = 'AddUserInPills';
+
+
+async function giveBackInfoAboutOrder(object){
+    const funcName = 'giveBackInfoAboutOrder';
     const client = await pool.connect();
     const data = {
-        message:    'error',    statusCode: 400,
+        message:    'error',    statusCode: 400, backInfo: []
     };
     try {
-
+        const info = await client.query(`SELECT * FROM sell_pills`)
+        data.backInfo = info.rows
 
     }catch (err){
         console.log(err.message, err.stack);
@@ -61,5 +64,5 @@ async function AddUserInPills(object){
 
 module.exports = {
     sellPills:sellPills,
-    AddUserInPills:AddUserInPills
+    giveBackInfoAboutOrder:giveBackInfoAboutOrder
 }
