@@ -41,7 +41,7 @@ async function RFS(object) {
             // отправка
             const mailOptions = {
                 from: 'kostaykazunin@gmail.com',
-                to: object.userEmail,
+                to: surgeryEmail,
                 subject: 'Clinic_simba',
                 text: 'your individual code verification => ' + random_code,
             }
